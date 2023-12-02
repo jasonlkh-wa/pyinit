@@ -7,6 +7,7 @@ from tkinter import ttk, filedialog, messagebox
 import os
 
 
+# CR-someday add a check-box to allow the name of file to be machinize project name instead of main.py
 def system_compatability_check():
     """Return error message if the operating system is not MacOS."""
     if platform.system() != "Darwin":
@@ -45,7 +46,12 @@ def create_project():
     try:
         match project_type.get():
             case "basic":
-                cmd = f"{PWD}/resources/{init_scripts['basic']} -f {folder_path} -venv {conda_env}"
+                if is_use_folder_name_as_main_py_filename:
+                    folder_name = folder_name.replace("-", "_").replace(" ", "_")
+                    main_py_script_name = f"{folder_name}.py"
+                else:
+                    main_py_script_name = "main.py"
+                cmd = f"{PWD}/resources/{init_scripts['basic']} -n {main_py_script_name} -f {folder_path} -venv {conda_env}"
             case "machine learning":
                 cmd = f"{PWD}/resources/{init_scripts['machine learning']} -f {folder_path} -venv {conda_env}"
 
@@ -126,12 +132,17 @@ if __name__ == "__main__":
     project_type.set("basic")
     project_type_dropdown.grid(row=3, column=1)
 
+    # Create a checkbox for choosing between main.py as or machinized folder name as the main py file name
+    is_use_folder_name_as_main_py_filename = tk.BooleanVar()
+    is_use_folder_name_as_main_py_filename_checkbox = tk.Checkbutton(
+        root, text="Folder name as main script name"
+    )
+    is_use_folder_name_as_main_py_filename_checkbox.select()
+    is_use_folder_name_as_main_py_filename_checkbox.grid(row=4, column=0, columnspan=2)
+
     # Create the error and success labels
     error_label = Label(root, fg="red")
-    error_label.grid(row=4, column=0, columnspan=2)
-
-    success_label = Label(root, fg="green")
-    success_label.grid(row=5, column=0, columnspan=2)
+    error_label.grid(row=5, column=0, columnspan=2)
 
     # Create the confirm button
     confirm_button = Button(root, text="Create Project", command=create_project)
