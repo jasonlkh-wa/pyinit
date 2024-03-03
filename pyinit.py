@@ -1,4 +1,3 @@
-#!/Users/jason/opt/miniconda3/envs/clone-base-3.10/bin/python3.10
 import platform
 import subprocess
 import tkinter as tk
